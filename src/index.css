@@ -12,7 +12,7 @@
   --font-serif: "Playfair Display", serif;
 }
 
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;900&family=Outfit:wght@400;500;600;700;800&family=Playfair+Display:ital,wght@1,400;1,700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Outfit:wght@400;500;600;700;800&family=Playfair+Display:ital,wght@1,400;1,700;1,900&display=swap');
 
 html.lenis {
   height: auto;
@@ -81,16 +81,38 @@ body {
 }
 
 .wholesale-text {
-  background: linear-gradient(to bottom, #1e3a8a, #002366);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  text-shadow: 0 4px 10px rgba(0,0,0,0.1);
+  color: #1e40af; /* A slightly more vibrant deep blue for contrast */
+  font-family: var(--font-serif);
+  font-style: italic;
+  font-weight: 400;
+  letter-spacing: -0.02em;
+  text-shadow: 0 0 20px rgba(0, 0, 0, 0.4);
 }
 
-.btn-glow {
-  box-shadow: 0 0 30px rgba(0, 71, 171, 0.4);
+.btn-blue-glow {
+  background: linear-gradient(135deg, #0047ab 0%, #003380 100%);
+  box-shadow: 0 10px 40px rgba(0, 71, 171, 0.4);
+  transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
-.btn-glow:hover {
-  box-shadow: 0 0 50px rgba(0, 71, 171, 0.6);
+.btn-blue-glow:hover {
+  box-shadow: 0 15px 50px rgba(0, 71, 171, 0.6);
+  transform: translateY(-2px);
+}
+
+.btn-outline-gold {
+  border: 1px solid #c5a059;
+  background: transparent;
+  color: #ffffff;
+  transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.btn-outline-gold:hover {
+  background: rgba(197, 160, 89, 0.1);
+  box-shadow: 0 0 30px rgba(197, 160, 89, 0.2);
+  transform: translateY(-2px);
+}
+
+.vignette-overlay {
+  background: radial-gradient(circle at center, transparent 0%, rgba(0, 26, 77, 0.6) 50%, rgba(0, 10, 30, 0.95) 100%);
 }

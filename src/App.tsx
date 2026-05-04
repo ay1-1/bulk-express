@@ -57,9 +57,8 @@ export default function App() {
     // 2. Initialize AOS
     AOS.init({
       duration: 1000,
-      once: false,
-      mirror: true,
-      anchorPlacement: 'top-bottom'
+      once: true,
+      easing: "ease-out-cubic",
     });
 
     // 3. Custom Cursor GSAP
@@ -92,12 +91,24 @@ export default function App() {
         duration: 0.8,
         ease: "power3.out"
       })
-      .from(".hero-text-inner", {
-        y: 100,
-        duration: 1.2,
-        stagger: 0.15,
+      .from(".art-of", {
+        y: 50,
+        opacity: 0,
+        duration: 1,
         ease: "power4.out"
       }, "-=0.4")
+      .from(".wholesale-word", {
+        x: 100,
+        opacity: 0,
+        duration: 1.2,
+        ease: "power4.out"
+      }, "-=0.8")
+      .from(".excellence-word", {
+        y: 50,
+        opacity: 0,
+        duration: 1,
+        ease: "power4.out"
+      }, "-=0.8")
       .from(".hero-description", {
         y: 30,
         opacity: 0,
@@ -184,14 +195,14 @@ export default function App() {
       >
         <div className="max-w-7xl mx-auto w-full flex justify-between items-center">
           <div className="flex items-center space-x-3 group cursor-pointer">
-            <div className="w-9 h-9 bg-white flex items-center justify-center rounded-sm shadow-xl">
-              <span className="text-brand-blue font-display font-bold text-xl leading-none">B</span>
+            <div className="w-8 h-8 bg-white flex items-center justify-center rounded-[2px] shadow-2xl">
+              <span className="text-brand-blue font-display font-black text-lg leading-none">B</span>
             </div>
             <div className="flex flex-col justify-center">
-              <h1 className="font-display font-black text-[18px] tracking-tight text-white leading-[0.8]">
+              <h1 className="font-display font-black text-[20px] tracking-tight text-white leading-none">
                 BULK
               </h1>
-              <p className="text-[7px] uppercase tracking-[0.25em] font-medium text-white/50 mt-1">
+              <p className="text-[7px] uppercase tracking-[0.2em] font-medium text-white/50 leading-none mt-[2px]">
                 WHOLESALES & SUPERMARKET
               </p>
             </div>
@@ -216,7 +227,7 @@ export default function App() {
                   <ShoppingCart className="w-4 h-4 cursor-pointer text-white/60 hover:text-white transition-colors" />
                 </div>
              </div>
-             <button className="bg-transparent border border-brand-gold/60 text-white px-8 py-2.5 rounded-full text-[10px] font-bold uppercase tracking-[0.2em] transition-all hover:bg-brand-gold hover:text-brand-blue hover:border-brand-gold">
+             <button className="bg-transparent border border-[#c5a059] text-white px-8 py-2 rounded-full text-[10px] font-bold uppercase tracking-[0.2em] transition-all hover:bg-brand-gold hover:text-brand-blue">
                 SHOP NOW
              </button>
              <button className="lg:hidden text-white" onClick={() => setIsMenuOpen(!isMenuOpen)}>
@@ -270,38 +281,39 @@ export default function App() {
             className="w-full h-full object-cover"
           />
           {/* Deep Blue Cinematic Overlay */}
-          <div className="absolute inset-0 bg-[#002366]/75 mix-blend-multiply" />
+          <div className="absolute inset-0 bg-[#002366]/65 mix-blend-multiply" />
+          <div className="absolute inset-0 vignette-overlay" />
           <div className="absolute inset-0 bg-gradient-to-b from-[#002366]/40 via-transparent to-[#002366]" />
         </div>
         
         <div className="relative z-10 text-center px-6 max-w-5xl">
-          <div className="hero-subtitle mb-8">
-            <span className="text-brand-gold text-[10px] font-bold uppercase tracking-[0.6em]">
+          <div className="hero-subtitle mb-6">
+            <span className="text-brand-gold text-[10px] sm:text-[11px] font-black uppercase tracking-[0.6em] brightness-125">
               LAGOS ISLAND'S CHOICE
             </span>
           </div>
           
-          <h2 className="text-[60px] md:text-[130px] font-display font-bold text-white leading-[0.87] tracking-tight mb-12">
+          <h2 className="text-[65px] sm:text-[145px] font-display font-extrabold text-white leading-[0.8] tracking-tighter mb-10">
             <span className="hero-text-line">
-              <span className="hero-text-inner">The Art of</span>
+              <span className="art-of block">The Art of</span>
             </span>
             <span className="hero-text-line">
-              <span className="hero-text-inner font-serif italic py-1 opacity-90 wholesale-text">Wholesale</span>
+              <span className="wholesale-word block wholesale-text py-2">Wholesale</span>
             </span>
             <span className="hero-text-line">
-              <span className="hero-text-inner">Excellence</span>
+              <span className="excellence-word block">Excellence</span>
             </span>
           </h2>
 
-          <p className="hero-description text-sm md:text-base text-white/60 max-w-2xl mx-auto mb-14 leading-relaxed font-normal">
+          <p className="hero-description text-[13px] sm:text-[15px] text-white/50 max-w-2xl mx-auto mb-12 leading-relaxed font-normal px-4">
             Premium supermarket staples and bulk wholesale essentials, delivered with Xpress efficiency to the heart of Lagos Island, near Sandgrouse.
           </p>
 
-          <div className="flex flex-col sm:flex-row items-center justify-center gap-6">
-            <button className="hero-cta group w-full sm:w-auto bg-[#0047ab] text-white px-12 py-5 rounded-full font-bold uppercase tracking-[0.2em] text-[10px] btn-glow transition-all flex items-center justify-center gap-3">
+          <div className="flex flex-col sm:flex-row items-center justify-center gap-5 px-6">
+            <button className="hero-cta group w-full sm:w-auto text-white px-10 py-4 rounded-full font-bold uppercase tracking-[0.2em] text-[10px] btn-blue-glow transition-all flex items-center justify-center gap-3">
               SHOP WHOLESALE <ChevronRight className="w-4 h-4 transition-transform group-hover:translate-x-1" />
             </button>
-            <button className="hero-cta w-full sm:w-auto bg-transparent border border-white/20 text-white/80 px-12 py-5 rounded-full font-bold uppercase tracking-[0.2em] text-[10px] transition-all hover:bg-white/5 hover:border-white/40">
+            <button className="hero-cta w-full sm:w-auto text-white px-10 py-4 rounded-full font-bold uppercase tracking-[0.2em] text-[10px] btn-outline-gold transition-all">
               VIEW SUPERMARKET
             </button>
           </div>
@@ -313,16 +325,16 @@ export default function App() {
         </div>
       </section>
 
-      <section id="wholesale" className="py-24 sm:py-32 bg-brand-blue relative px-6 sm:px-12">
-        <div className="max-w-7xl mx-auto w-full mb-16">
-          <div className="flex items-center gap-4">
-             <div className="h-px bg-white/10 flex-grow"></div>
-             <p className="text-white/40 text-[9px] uppercase tracking-[0.4em] font-bold">Shop by Category</p>
-             <div className="h-px bg-white/10 flex-grow"></div>
+      <section id="wholesale" className="py-24 sm:py-32 bg-brand-blue relative px-6 sm:px-12 flex flex-col items-center">
+        <div className="max-w-[1400px] w-full mb-16">
+          <div className="flex items-center gap-8">
+             <div className="h-[1px] bg-white/10 flex-grow"></div>
+             <p className="text-white/40 text-[10px] uppercase tracking-[0.5em] font-black">Shop by Category</p>
+             <div className="h-[1px] bg-white/10 flex-grow"></div>
           </div>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 lg:gap-10">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 lg:gap-10 w-full max-w-[1400px]">
           {[
             { name: "BEVERAGES", cat: "Shop by Category", img: IMAGES.drinks, delay: "0" },
             { name: "BEAUTY CARE", cat: "Shop by Category", img: IMAGES.lotions, delay: "200" }
@@ -333,16 +345,16 @@ export default function App() {
               data-aos-delay={item.delay}
               className="group cursor-pointer relative"
             >
-              <div className="relative h-[480px] md:h-[500px] overflow-hidden rounded-[2.5rem] transition-all duration-700">
+              <div className="relative h-[550px] overflow-hidden rounded-[2.5rem] transition-all duration-1000 ease-in-out shadow-2xl">
                 <img 
                   src={item.img} 
                   alt={item.name}
-                  className="w-full h-full object-cover grayscale-[0.2] group-hover:grayscale-0 group-hover:scale-105 transition-all duration-1000 ease-out"
+                  className="w-full h-full object-cover grayscale-[0.3] group-hover:grayscale-0 group-hover:scale-105 transition-all duration-[1200ms] ease-out"
                 />
-                <div className="absolute inset-0 bg-[#001a4d]/40 group-hover:bg-[#001a4d]/20 transition-all duration-500" />
+                <div className="absolute inset-0 bg-[#001a4d]/40 group-hover:bg-[#001a4d]/20 transition-all duration-700" />
                 <div className="absolute inset-x-0 bottom-0 p-12">
-                  <p className="text-white/50 text-[9px] font-bold uppercase tracking-[.3em] mb-3">{item.cat}</p>
-                  <h3 className="text-white font-display text-4xl font-bold tracking-tight">{item.name}</h3>
+                  <p className="text-white/50 text-[10px] font-black uppercase tracking-[0.3em] mb-3">{item.cat}</p>
+                  <h3 className="text-white font-display text-[45px] font-extrabold tracking-tight leading-none uppercase">{item.name}</h3>
                 </div>
               </div>
             </div>
