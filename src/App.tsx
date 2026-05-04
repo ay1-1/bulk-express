@@ -29,8 +29,10 @@ gsap.registerPlugin(ScrollTrigger);
 const IMAGES = {
   hero: "https://images.unsplash.com/photo-1542838132-92c53300491e?auto=format&fit=crop&q=80&w=2000",
   drinks: "https://images.unsplash.com/photo-1622483767028-3f66f32aef97?auto=format&fit=crop&q=80&w=800",
-  soaps: "https://images.unsplash.com/photo-1600857062241-98e5dba7f214?auto=format&fit=crop&q=80&w=800",
-  lotions: "https://images.unsplash.com/photo-1556228578-0d85b1a4d571?auto=format&fit=crop&q=80&w=800"
+  lotions: "https://images.unsplash.com/photo-1596461404969-9ae70f2830c1?auto=format&fit=crop&q=80&w=800", // Premium lotion image
+  grains: "https://images.unsplash.com/photo-1586201375761-83865001e31c?auto=format&fit=crop&q=80&w=800", // Rice/Grains
+  produce: "https://images.unsplash.com/photo-1542838132-92c53300491e?auto=format&fit=crop&q=80&w=800", // Fresh Produce
+  homecare: "https://images.unsplash.com/photo-1584622650111-993a426fbf0a?auto=format&fit=crop&q=80&w=800" // Detergents/Cleaning
 };
 
 export default function App() {
@@ -59,27 +61,37 @@ export default function App() {
       duration: 1000,
       once: true,
       easing: "ease-out-cubic",
+      offset: 100
     });
 
     // 3. Custom Cursor GSAP
-    const xTo = gsap.quickSetter(cursorRef.current, "x", "px");
-    const yTo = gsap.quickSetter(cursorRef.current, "y", "px");
-    const xFollowerTo = gsap.quickSetter(followerRef.current, "x", "px");
-    const yFollowerTo = gsap.quickSetter(followerRef.current, "y", "px");
+    const cursor = cursorRef.current;
+    const follower = followerRef.current;
+    
+    if (cursor && follower) {
+      const xTo = gsap.quickSetter(cursor, "x", "px");
+      const yTo = gsap.quickSetter(cursor, "y", "px");
 
-    const onMouseMove = (e: MouseEvent) => {
-      xTo(e.clientX);
-      yTo(e.clientY);
-      gsap.to(followerRef.current, {
-        duration: 0.5,
-        x: e.clientX,
-        y: e.clientY,
-        ease: "power2.out"
-      });
-    };
+      const onMouseMove = (e: MouseEvent) => {
+        xTo(e.clientX);
+        yTo(e.clientY);
+        gsap.to(follower, {
+          duration: 0.6,
+          x: e.clientX,
+          y: e.clientY,
+          ease: "power3.out"
+        });
+      };
 
-    window.addEventListener("mousemove", onMouseMove);
+      window.addEventListener("mousemove", onMouseMove);
 
+      return () => {
+        window.removeEventListener("mousemove", onMouseMove);
+      };
+    }
+  }, []);
+
+  useEffect(() => {
     // 4. GSAP Animations
     const ctx = gsap.context(() => {
       // Hero Entrance
@@ -141,11 +153,11 @@ export default function App() {
         onEnter: () => {
           gsap.to(navRef.current, { 
             height: "80px", 
-            backgroundColor: "rgba(0, 35, 102, 0.9)",
+            backgroundColor: "rgba(0, 35, 102, 0.95)",
             backdropFilter: "blur(20px)",
             borderBottom: "1px solid rgba(255, 255, 255, 0.1)",
             duration: 0.5,
-            ease: "power2.out"
+            ease: "expo.out"
           });
         },
         onLeaveBack: () => {
@@ -155,43 +167,37 @@ export default function App() {
             backdropFilter: "blur(0px)",
             borderBottom: "1px solid rgba(255, 255, 255, 0)",
             duration: 0.5,
-            ease: "power2.out"
+            ease: "expo.out"
           });
         }
       });
 
-      // Hover Effects for buttons
-      const interactiveElements = document.querySelectorAll('button, a, .group');
+      // Interactive hover scaling for interactive elements
+      const interactiveElements = document.querySelectorAll('button, a:not(.no-gsap), .group');
       interactiveElements.forEach(el => {
         el.addEventListener('mouseenter', () => {
           document.body.classList.add('cursor-hover');
-          gsap.to(el, { scale: 1.05, duration: 0.3 });
         });
         el.addEventListener('mouseleave', () => {
           document.body.classList.remove('cursor-hover');
-          gsap.to(el, { scale: 1, duration: 0.3 });
         });
       });
 
     }, heroRef);
 
-    return () => {
-      ctx.revert();
-      lenis.destroy();
-      window.removeEventListener("mousemove", onMouseMove);
-    };
+    return () => ctx.revert();
   }, []);
 
   return (
-    <div className="min-h-screen bg-white font-sans selection:bg-brand-blue selection:text-white">
+    <div className="min-h-screen bg-brand-blue font-sans selection:bg-brand-gold selection:text-brand-blue">
       {/* Custom Cursor */}
-      <div ref={cursorRef} className="custom-cursor" />
-      <div ref={followerRef} className="custom-cursor-follower" />
+      <div ref={cursorRef} className="custom-cursor hidden md:block" />
+      <div ref={followerRef} className="custom-cursor-follower hidden md:block" />
 
       {/* Navigation */}
       <nav 
         ref={navRef}
-        className="fixed top-0 w-full z-50 flex items-center px-6 h-[100px]"
+        className="fixed top-0 w-full z-50 flex items-center px-6 h-[100px] transition-all duration-500"
       >
         <div className="max-w-7xl mx-auto w-full flex justify-between items-center">
           <div className="flex items-center space-x-3 group cursor-pointer">
@@ -209,7 +215,7 @@ export default function App() {
           </div>
 
           <div className="hidden lg:flex items-center space-x-10">
-            {['Home', 'Wholesale', 'Beverages', 'Beauty', 'Contact'].map((item) => (
+            {['Home', 'Wholesale', 'Beverages', 'Beauty', 'Groceries', 'Contact'].map((item) => (
               <a 
                 key={item} 
                 href={`#${item.toLowerCase()}`} 
@@ -250,7 +256,7 @@ export default function App() {
               <X size={32} />
             </button>
             <div className="flex flex-col items-center space-y-10">
-              {['Home', 'Wholesale', 'Beverages', 'Beauty', 'Contact'].map((item) => (
+              {['Home', 'Wholesale', 'Beverages', 'Beauty', 'Groceries', 'Contact'].map((item) => (
                 <a 
                   key={item} 
                   href={`#${item.toLowerCase()}`} 
@@ -277,7 +283,7 @@ export default function App() {
         >
           <img 
             src={IMAGES.hero} 
-            alt="Cinematic Supermarket"
+            alt="BULK XPRESS Cinematic Supermarket"
             className="w-full h-full object-cover"
           />
           {/* Deep Blue Cinematic Overlay */}
@@ -306,7 +312,7 @@ export default function App() {
           </h2>
 
           <p className="hero-description text-[13px] sm:text-[15px] text-white/50 max-w-2xl mx-auto mb-12 leading-relaxed font-normal px-4">
-            Premium supermarket staples and bulk wholesale essentials, delivered with Xpress efficiency to the heart of Lagos Island, near Sandgrouse.
+            Lagos Island's premier supply hub for premium supermarket staples and bulk essentials, delivered with Xpress efficiency from the heart of Sandgrouse.
           </p>
 
           <div className="flex flex-col sm:flex-row items-center justify-center gap-5 px-6">
@@ -321,10 +327,11 @@ export default function App() {
 
         {/* Scroll Indicator */}
         <div className="absolute bottom-12 left-1/2 -translate-x-1/2 flex flex-col items-center gap-6 opacity-30">
-          <div className="w-[1px] h-20 bg-gradient-to-b from-white to-transparent" />
+          <div className="w-[1px] h-20 bg-gradient-to-b from-white to-transparent animate-pulse" />
         </div>
       </section>
 
+      {/* Product Categories Section */}
       <section id="wholesale" className="py-24 sm:py-32 bg-brand-blue relative px-6 sm:px-12 flex flex-col items-center">
         <div className="max-w-[1400px] w-full mb-16">
           <div className="flex items-center gap-8">
@@ -334,10 +341,14 @@ export default function App() {
           </div>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 lg:gap-10 w-full max-w-[1400px]">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 lg:gap-10 w-full max-w-[1400px]">
           {[
-            { name: "BEVERAGES", cat: "Shop by Category", img: IMAGES.drinks, delay: "0" },
-            { name: "BEAUTY CARE", cat: "Shop by Category", img: IMAGES.lotions, delay: "200" }
+            { name: "BEVERAGES", cat: "Premium Water & Juices", img: IMAGES.drinks, delay: "0" },
+            { name: "BEAUTY CARE", cat: "Artisanal Soaps & Lotion Creams", img: IMAGES.lotions, delay: "100" },
+            { name: "GROCERIES", cat: "Fresh Grains & Stall Staples", img: IMAGES.grains, delay: "200" },
+            { name: "FRESH PRODUCE", cat: "Sandgrouse's Finest Harvest", img: IMAGES.produce, delay: "300" },
+            { name: "HOME CARE", cat: "Cleaning & Laundry Essentials", img: IMAGES.homecare, delay: "400" },
+            { name: "QUICK SNACKS", cat: "Imported & Local Favorites", img: IMAGES.hero, delay: "500" }
           ].map((item) => (
             <div
               key={item.name}
@@ -345,16 +356,16 @@ export default function App() {
               data-aos-delay={item.delay}
               className="group cursor-pointer relative"
             >
-              <div className="relative h-[550px] overflow-hidden rounded-[2.5rem] transition-all duration-1000 ease-in-out shadow-2xl">
+              <div className="relative h-[450px] overflow-hidden rounded-[2.5rem] transition-all duration-1000 ease-in-out shadow-2xl border border-white/5">
                 <img 
                   src={item.img} 
-                  alt={item.name}
-                  className="w-full h-full object-cover grayscale-[0.3] group-hover:grayscale-0 group-hover:scale-105 transition-all duration-[1200ms] ease-out"
+                  alt={`${item.name} - BULK XPRESS`}
+                  className="w-full h-full object-cover grayscale-[0.4] group-hover:grayscale-0 group-hover:scale-110 transition-all duration-[1500ms] ease-out"
                 />
-                <div className="absolute inset-0 bg-[#001a4d]/40 group-hover:bg-[#001a4d]/20 transition-all duration-700" />
-                <div className="absolute inset-x-0 bottom-0 p-12">
-                  <p className="text-white/50 text-[10px] font-black uppercase tracking-[0.3em] mb-3">{item.cat}</p>
-                  <h3 className="text-white font-display text-[45px] font-extrabold tracking-tight leading-none uppercase">{item.name}</h3>
+                <div className="absolute inset-0 bg-brand-navy/50 group-hover:bg-brand-navy/20 transition-all duration-700" />
+                <div className="absolute inset-x-0 bottom-0 p-10">
+                  <p className="text-white/50 text-[9px] font-black uppercase tracking-[0.3em] mb-2">{item.cat}</p>
+                  <h3 className="text-white font-display text-[32px] font-extrabold tracking-tight leading-none uppercase">{item.name}</h3>
                 </div>
               </div>
             </div>
@@ -363,12 +374,12 @@ export default function App() {
       </section>
 
       {/* Advantage Section */}
-      <section className="bg-brand-blue py-40 relative overflow-hidden">
+      <section className="bg-brand-navy py-40 relative overflow-hidden">
         <div className="absolute top-[-10%] left-[-10%] w-[1000px] h-[1000px] bg-white/5 rounded-full blur-[150px] opacity-30" />
         
         <div className="max-w-7xl mx-auto px-6 relative z-10">
           <div className="text-center mb-32" data-aos="fade-up">
-            <span className="text-white/30 font-bold text-[11px] uppercase tracking-[0.5em] mb-6 block">Why Choose Xpress</span>
+            <span className="text-white/30 font-bold text-[11px] uppercase tracking-[0.5em] mb-6 block">The BULK XPRESS Edge</span>
             <h2 className="text-white font-display text-5xl md:text-8xl font-extrabold mb-10 tracking-tighter uppercase">
               The <span className="font-light italic text-white/50">Lagos Island</span> Standard
             </h2>
@@ -378,18 +389,18 @@ export default function App() {
             {[
               { 
                 icon: <Truck className="w-10 h-10" />, 
-                title: "Xpress Shipping", 
-                desc: "Optimized logistics via Sandgrouse market hubs for guaranteed 2-hour delivery across Lagos Island districts." 
+                title: "Xpress Delivery", 
+                desc: "Optimized logistics via Sandgrouse market hubs for guaranteed 2-hour shipping across Lagos Island districts." 
               },
               { 
                 icon: <TrendingDown className="w-10 h-10" />, 
-                title: "Direct Pricing", 
-                desc: "Wholesale pricing directly from manufacturers, passed straight to your household or business account." 
+                title: "Wholesale Value", 
+                desc: "Direct-from-manufacturer pricing, passed straight to your household or business for maximum savings." 
               },
               { 
                 icon: <ShieldCheck className="w-10 h-10" />, 
-                title: "Vetted Brands", 
-                desc: "Every product is strictly vetted. No counterfeits, only the genuine brands you trust for your family." 
+                title: "Premium Quality", 
+                desc: "From premium lotion creams to vetted grocery staples, we only stock genuine brands you trust." 
               }
             ].map((feature, idx) => (
               <div
@@ -398,7 +409,7 @@ export default function App() {
                 data-aos-delay={idx * 150}
                 className="group text-center"
               >
-                <div className="w-24 h-24 mx-auto bg-white/5 border border-white/10 shadow-2xl rounded-3xl flex items-center justify-center text-white mb-10 group-hover:bg-white group-hover:text-brand-blue group-hover:scale-110 transition-all duration-500">
+                <div className="w-24 h-24 mx-auto bg-white/5 border border-white/10 shadow-2xl rounded-3xl flex items-center justify-center text-white mb-10 group-hover:bg-brand-gold group-hover:text-brand-blue group-hover:scale-110 transition-all duration-500">
                   {feature.icon}
                 </div>
                 <h3 className="text-white font-display text-2xl font-bold mb-6 tracking-tight uppercase">{feature.title}</h3>
@@ -424,8 +435,8 @@ export default function App() {
                   BULK XPRESS
                 </h3>
               </div>
-              <p className="text-slate-400 text-lg leading-relaxed mb-12 max-w-sm">
-                Lagos Island's premier supply hub bridging global brands with local supermarket convenience.
+              <p className="text-slate-400 text-lg leading-relaxed mb-12 max-w-sm font-medium">
+                Lagos Island's premier supply hub bridging global brands with local supermarket convenience. Wholesale excellence, delivered Xpress.
               </p>
               <div className="flex space-x-6">
                 {['fb', 'ig', 'tw'].map(s => (
@@ -437,33 +448,33 @@ export default function App() {
             </div>
 
             <div className="lg:col-span-1">
-              <h4 className="font-display font-bold text-slate-900 mb-10 uppercase tracking-[0.4em] text-[10px]">Explore</h4>
+              <h4 className="font-display font-bold text-slate-900 mb-10 uppercase tracking-[0.4em] text-[10px]">Aisles</h4>
               <ul className="space-y-6">
-                {['Beverages', 'Laundry', 'Skin Care', 'Groceries', 'Snacks'].map(item => (
+                {['Beverages', 'Lotion Creams', 'Grains & Pasta', 'Skin Care', 'Cleaning'].map(item => (
                   <li key={item} className="text-slate-400 text-sm hover:text-brand-blue transition-colors cursor-pointer font-medium">{item}</li>
                 ))}
               </ul>
             </div>
 
             <div className="lg:col-span-2 pl-0 lg:pl-10">
-              <h4 className="font-display font-bold text-slate-900 mb-10 uppercase tracking-[0.4em] text-[10px]">Headquarters</h4>
+              <h4 className="font-display font-bold text-slate-900 mb-10 uppercase tracking-[0.4em] text-[10px]">Lagos Island Hub</h4>
               <div className="space-y-10">
                 <div className="flex items-start gap-4">
                   <MapPin size={24} className="text-brand-blue flex-shrink-0 mt-1" />
-                  <p className="text-slate-500 text-lg leading-relaxed">
+                  <p className="text-slate-500 text-lg leading-relaxed font-medium">
                     42 Sandgrouse Market Road,<br />
                     Lagos Island, Lagos, Nigeria.
                   </p>
                 </div>
                 <div className="pt-8 border-t border-slate-200 flex items-center gap-8">
                   <div>
-                    <p className="text-slate-400 text-[9px] font-black uppercase tracking-widest mb-1">Direct Line</p>
-                    <p className="text-slate-900 font-bold text-xl">+234 800 BULK XPR</p>
+                    <p className="text-slate-400 text-[9px] font-black uppercase tracking-widest mb-1">Xpress Line</p>
+                    <p className="text-brand-blue font-bold text-xl">+234 800 BULK XPR</p>
                   </div>
                   <div className="w-[1px] h-10 bg-slate-200" />
                   <div>
-                    <p className="text-slate-400 text-[9px] font-black uppercase tracking-widest mb-1">Email</p>
-                    <p className="text-slate-900 font-bold text-lg">Xpress@bulk.co</p>
+                    <p className="text-slate-400 text-[9px] font-black uppercase tracking-widest mb-1">Inquiries</p>
+                    <p className="text-brand-blue font-bold text-lg">hello@bulkxpress.co</p>
                   </div>
                 </div>
               </div>
@@ -472,10 +483,10 @@ export default function App() {
 
           <div className="pt-16 border-t border-slate-200 flex flex-col md:flex-row justify-between items-center gap-10">
             <p className="text-slate-400 text-[9px] uppercase font-bold tracking-[0.5em]">
-              © {new Date().getFullYear()} Bulk Xpress Wholesales & Supermarket.
+              © {new Date().getFullYear()} Bulk Xpress Wholesales & Supermarket. All rights reserved.
             </p>
             <div className="flex space-x-12">
-              <span className="text-slate-300 text-[9px] uppercase font-bold tracking-[0.4em] italic">Precision in Supply</span>
+              <span className="text-slate-300 text-[9px] uppercase font-bold tracking-[0.4em] italic leading-none">Wholesale Excellence. Xpress Delivery.</span>
             </div>
           </div>
         </div>
@@ -483,4 +494,5 @@ export default function App() {
     </div>
   );
 }
+
 
