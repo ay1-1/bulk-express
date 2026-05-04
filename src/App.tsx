@@ -1,0 +1,474 @@
+/**
+ * @license
+ * SPDX-License-Identifier: Apache-2.0
+ */
+
+import { useState, useEffect, useRef } from 'react';
+import { motion, AnimatePresence } from 'motion/react';
+import { 
+  ShoppingBag, 
+  Truck, 
+  ShieldCheck, 
+  TrendingDown, 
+  MapPin, 
+  Phone, 
+  Mail, 
+  ChevronRight,
+  Menu,
+  X,
+  Search,
+  ShoppingCart
+} from 'lucide-react';
+import gsap from 'gsap';
+import { ScrollTrigger } from 'gsap/ScrollTrigger';
+import Lenis from 'lenis';
+import AOS from 'aos';
+
+gsap.registerPlugin(ScrollTrigger);
+
+const IMAGES = {
+  hero: "https://images.unsplash.com/photo-1542838132-92c53300491e?auto=format&fit=crop&q=80&w=2000",
+  drinks: "https://images.unsplash.com/photo-1622483767028-3f66f32aef97?auto=format&fit=crop&q=80&w=800",
+  soaps: "https://images.unsplash.com/photo-1600857062241-98e5dba7f214?auto=format&fit=crop&q=80&w=800",
+  lotions: "https://images.unsplash.com/photo-1556228578-0d85b1a4d571?auto=format&fit=crop&q=80&w=800"
+};
+
+export default function App() {
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const heroRef = useRef<HTMLDivElement>(null);
+  const navRef = useRef<HTMLElement>(null);
+  const bgRef = useRef<HTMLDivElement>(null);
+  const cursorRef = useRef<HTMLDivElement>(null);
+  const followerRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    // 1. Initialize Lenis (Smooth Scroll)
+    const lenis = new Lenis({
+      duration: 1.2,
+      easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
+    });
+
+    function raf(time: number) {
+      lenis.raf(time);
+      requestAnimationFrame(raf);
+    }
+    requestAnimationFrame(raf);
+
+    // 2. Initialize AOS
+    AOS.init({
+      duration: 1000,
+      once: false,
+      mirror: true,
+      anchorPlacement: 'top-bottom'
+    });
+
+    // 3. Custom Cursor GSAP
+    const xTo = gsap.quickSetter(cursorRef.current, "x", "px");
+    const yTo = gsap.quickSetter(cursorRef.current, "y", "px");
+    const xFollowerTo = gsap.quickSetter(followerRef.current, "x", "px");
+    const yFollowerTo = gsap.quickSetter(followerRef.current, "y", "px");
+
+    const onMouseMove = (e: MouseEvent) => {
+      xTo(e.clientX);
+      yTo(e.clientY);
+      gsap.to(followerRef.current, {
+        duration: 0.5,
+        x: e.clientX,
+        y: e.clientY,
+        ease: "power2.out"
+      });
+    };
+
+    window.addEventListener("mousemove", onMouseMove);
+
+    // 4. GSAP Animations
+    const ctx = gsap.context(() => {
+      // Hero Entrance
+      const tl = gsap.timeline({ delay: 0.5 });
+      
+      tl.from(".hero-subtitle", {
+        y: 20,
+        opacity: 0,
+        duration: 0.8,
+        ease: "power3.out"
+      })
+      .from(".hero-text-inner", {
+        y: 100,
+        duration: 1.2,
+        stagger: 0.15,
+        ease: "power4.out"
+      }, "-=0.4")
+      .from(".hero-description", {
+        y: 30,
+        opacity: 0,
+        duration: 0.8,
+        ease: "power3.out"
+      }, "-=0.8")
+      .from(".hero-cta", {
+        y: 20,
+        opacity: 0,
+        duration: 0.8,
+        stagger: 0.2,
+        ease: "power3.out"
+      }, "-=0.6");
+
+      // Parallax Background
+      gsap.to(bgRef.current, {
+        scrollTrigger: {
+          trigger: heroRef.current,
+          start: "top top",
+          end: "bottom top",
+          scrub: true
+        },
+        yPercent: 20,
+        ease: "none"
+      });
+
+      // Sticky Navbar Effect
+      ScrollTrigger.create({
+        start: "top -150",
+        onEnter: () => {
+          gsap.to(navRef.current, { 
+            height: "80px", 
+            backgroundColor: "rgba(0, 35, 102, 0.9)",
+            backdropFilter: "blur(20px)",
+            borderBottom: "1px solid rgba(255, 255, 255, 0.1)",
+            duration: 0.5,
+            ease: "power2.out"
+          });
+        },
+        onLeaveBack: () => {
+          gsap.to(navRef.current, { 
+            height: "100px", 
+            backgroundColor: "transparent",
+            backdropFilter: "blur(0px)",
+            borderBottom: "1px solid rgba(255, 255, 255, 0)",
+            duration: 0.5,
+            ease: "power2.out"
+          });
+        }
+      });
+
+      // Hover Effects for buttons
+      const interactiveElements = document.querySelectorAll('button, a, .group');
+      interactiveElements.forEach(el => {
+        el.addEventListener('mouseenter', () => {
+          document.body.classList.add('cursor-hover');
+          gsap.to(el, { scale: 1.05, duration: 0.3 });
+        });
+        el.addEventListener('mouseleave', () => {
+          document.body.classList.remove('cursor-hover');
+          gsap.to(el, { scale: 1, duration: 0.3 });
+        });
+      });
+
+    }, heroRef);
+
+    return () => {
+      ctx.revert();
+      lenis.destroy();
+      window.removeEventListener("mousemove", onMouseMove);
+    };
+  }, []);
+
+  return (
+    <div className="min-h-screen bg-white font-sans selection:bg-brand-blue selection:text-white">
+      {/* Custom Cursor */}
+      <div ref={cursorRef} className="custom-cursor" />
+      <div ref={followerRef} className="custom-cursor-follower" />
+
+      {/* Navigation */}
+      <nav 
+        ref={navRef}
+        className="fixed top-0 w-full z-50 flex items-center px-6 h-[100px]"
+      >
+        <div className="max-w-7xl mx-auto w-full flex justify-between items-center">
+          <div className="flex items-center space-x-3 group cursor-pointer">
+            <div className="w-9 h-9 bg-white flex items-center justify-center rounded-sm shadow-xl">
+              <span className="text-brand-blue font-display font-bold text-xl leading-none">B</span>
+            </div>
+            <div className="flex flex-col justify-center">
+              <h1 className="font-display font-black text-[18px] tracking-tight text-white leading-[0.8]">
+                BULK
+              </h1>
+              <p className="text-[7px] uppercase tracking-[0.25em] font-medium text-white/50 mt-1">
+                WHOLESALES & SUPERMARKET
+              </p>
+            </div>
+          </div>
+
+          <div className="hidden lg:flex items-center space-x-10">
+            {['Home', 'Wholesale', 'Beverages', 'Beauty', 'Contact'].map((item) => (
+              <a 
+                key={item} 
+                href={`#${item.toLowerCase()}`} 
+                className="text-[11px] font-medium uppercase tracking-[0.2em] text-white/70 hover:text-white transition-colors relative after:content-[''] after:absolute after:-bottom-1 after:left-0 after:w-0 after:h-px after:bg-brand-gold after:transition-all hover:after:w-full"
+              >
+                {item}
+              </a>
+            ))}
+          </div>
+
+          <div className="flex items-center space-x-6">
+             <div className="hidden md:flex items-center space-x-6 border-r border-white/10 pr-6 mr-1">
+                <Search className="w-4 h-4 cursor-pointer text-white/60 hover:text-white transition-colors" />
+                <div className="relative">
+                  <ShoppingCart className="w-4 h-4 cursor-pointer text-white/60 hover:text-white transition-colors" />
+                </div>
+             </div>
+             <button className="bg-transparent border border-brand-gold/60 text-white px-8 py-2.5 rounded-full text-[10px] font-bold uppercase tracking-[0.2em] transition-all hover:bg-brand-gold hover:text-brand-blue hover:border-brand-gold">
+                SHOP NOW
+             </button>
+             <button className="lg:hidden text-white" onClick={() => setIsMenuOpen(!isMenuOpen)}>
+              {isMenuOpen ? <X size={20} /> : <Menu size={20} />}
+            </button>
+          </div>
+        </div>
+      </nav>
+
+      <AnimatePresence>
+        {isMenuOpen && (
+          <motion.div 
+            initial={{ opacity: 0, x: '100%' }}
+            animate={{ opacity: 1, x: 0 }}
+            exit={{ opacity: 0, x: '100%' }}
+            transition={{ type: 'spring', damping: 25, stiffness: 200 }}
+            className="fixed inset-0 z-[60] bg-brand-blue flex items-center justify-center p-6"
+          >
+            <button className="absolute top-8 right-8 text-white/50 hover:text-white" onClick={() => setIsMenuOpen(false)}>
+              <X size={32} />
+            </button>
+            <div className="flex flex-col items-center space-y-10">
+              {['Home', 'Wholesale', 'Beverages', 'Beauty', 'Contact'].map((item) => (
+                <a 
+                  key={item} 
+                  href={`#${item.toLowerCase()}`} 
+                  onClick={() => setIsMenuOpen(false)}
+                  className="text-4xl md:text-6xl font-display font-medium text-white hover:italic transition-all tracking-tighter"
+                >
+                  {item}
+                </a>
+              ))}
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      {/* Hero Section */}
+      <section 
+        id="home" 
+        ref={heroRef}
+        className="relative h-screen flex items-center justify-center overflow-hidden bg-brand-blue"
+      >
+        <div 
+          ref={bgRef}
+          className="absolute inset-0 z-0 scale-110"
+        >
+          <img 
+            src={IMAGES.hero} 
+            alt="Cinematic Supermarket"
+            className="w-full h-full object-cover"
+          />
+          {/* Deep Blue Cinematic Overlay */}
+          <div className="absolute inset-0 bg-[#002366]/75 mix-blend-multiply" />
+          <div className="absolute inset-0 bg-gradient-to-b from-[#002366]/40 via-transparent to-[#002366]" />
+        </div>
+        
+        <div className="relative z-10 text-center px-6 max-w-5xl">
+          <div className="hero-subtitle mb-8">
+            <span className="text-brand-gold text-[10px] font-bold uppercase tracking-[0.6em]">
+              LAGOS ISLAND'S CHOICE
+            </span>
+          </div>
+          
+          <h2 className="text-[60px] md:text-[130px] font-display font-bold text-white leading-[0.87] tracking-tight mb-12">
+            <span className="hero-text-line">
+              <span className="hero-text-inner">The Art of</span>
+            </span>
+            <span className="hero-text-line">
+              <span className="hero-text-inner font-serif italic py-1 opacity-90 wholesale-text">Wholesale</span>
+            </span>
+            <span className="hero-text-line">
+              <span className="hero-text-inner">Excellence</span>
+            </span>
+          </h2>
+
+          <p className="hero-description text-sm md:text-base text-white/60 max-w-2xl mx-auto mb-14 leading-relaxed font-normal">
+            Premium supermarket staples and bulk wholesale essentials, delivered with Xpress efficiency to the heart of Lagos Island, near Sandgrouse.
+          </p>
+
+          <div className="flex flex-col sm:flex-row items-center justify-center gap-6">
+            <button className="hero-cta group w-full sm:w-auto bg-[#0047ab] text-white px-12 py-5 rounded-full font-bold uppercase tracking-[0.2em] text-[10px] btn-glow transition-all flex items-center justify-center gap-3">
+              SHOP WHOLESALE <ChevronRight className="w-4 h-4 transition-transform group-hover:translate-x-1" />
+            </button>
+            <button className="hero-cta w-full sm:w-auto bg-transparent border border-white/20 text-white/80 px-12 py-5 rounded-full font-bold uppercase tracking-[0.2em] text-[10px] transition-all hover:bg-white/5 hover:border-white/40">
+              VIEW SUPERMARKET
+            </button>
+          </div>
+        </div>
+
+        {/* Scroll Indicator */}
+        <div className="absolute bottom-12 left-1/2 -translate-x-1/2 flex flex-col items-center gap-6 opacity-30">
+          <div className="w-[1px] h-20 bg-gradient-to-b from-white to-transparent" />
+        </div>
+      </section>
+
+      <section id="wholesale" className="py-24 sm:py-32 bg-brand-blue relative px-6 sm:px-12">
+        <div className="max-w-7xl mx-auto w-full mb-16">
+          <div className="flex items-center gap-4">
+             <div className="h-px bg-white/10 flex-grow"></div>
+             <p className="text-white/40 text-[9px] uppercase tracking-[0.4em] font-bold">Shop by Category</p>
+             <div className="h-px bg-white/10 flex-grow"></div>
+          </div>
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 lg:gap-10">
+          {[
+            { name: "BEVERAGES", cat: "Shop by Category", img: IMAGES.drinks, delay: "0" },
+            { name: "BEAUTY CARE", cat: "Shop by Category", img: IMAGES.lotions, delay: "200" }
+          ].map((item) => (
+            <div
+              key={item.name}
+              data-aos="fade-up"
+              data-aos-delay={item.delay}
+              className="group cursor-pointer relative"
+            >
+              <div className="relative h-[480px] md:h-[500px] overflow-hidden rounded-[2.5rem] transition-all duration-700">
+                <img 
+                  src={item.img} 
+                  alt={item.name}
+                  className="w-full h-full object-cover grayscale-[0.2] group-hover:grayscale-0 group-hover:scale-105 transition-all duration-1000 ease-out"
+                />
+                <div className="absolute inset-0 bg-[#001a4d]/40 group-hover:bg-[#001a4d]/20 transition-all duration-500" />
+                <div className="absolute inset-x-0 bottom-0 p-12">
+                  <p className="text-white/50 text-[9px] font-bold uppercase tracking-[.3em] mb-3">{item.cat}</p>
+                  <h3 className="text-white font-display text-4xl font-bold tracking-tight">{item.name}</h3>
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      {/* Advantage Section */}
+      <section className="bg-brand-blue py-40 relative overflow-hidden">
+        <div className="absolute top-[-10%] left-[-10%] w-[1000px] h-[1000px] bg-white/5 rounded-full blur-[150px] opacity-30" />
+        
+        <div className="max-w-7xl mx-auto px-6 relative z-10">
+          <div className="text-center mb-32" data-aos="fade-up">
+            <span className="text-white/30 font-bold text-[11px] uppercase tracking-[0.5em] mb-6 block">Why Choose Xpress</span>
+            <h2 className="text-white font-display text-5xl md:text-8xl font-extrabold mb-10 tracking-tighter uppercase">
+              The <span className="font-light italic text-white/50">Lagos Island</span> Standard
+            </h2>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-16 lg:gap-24">
+            {[
+              { 
+                icon: <Truck className="w-10 h-10" />, 
+                title: "Xpress Shipping", 
+                desc: "Optimized logistics via Sandgrouse market hubs for guaranteed 2-hour delivery across Lagos Island districts." 
+              },
+              { 
+                icon: <TrendingDown className="w-10 h-10" />, 
+                title: "Direct Pricing", 
+                desc: "Wholesale pricing directly from manufacturers, passed straight to your household or business account." 
+              },
+              { 
+                icon: <ShieldCheck className="w-10 h-10" />, 
+                title: "Vetted Brands", 
+                desc: "Every product is strictly vetted. No counterfeits, only the genuine brands you trust for your family." 
+              }
+            ].map((feature, idx) => (
+              <div
+                key={feature.title}
+                data-aos="fade-up"
+                data-aos-delay={idx * 150}
+                className="group text-center"
+              >
+                <div className="w-24 h-24 mx-auto bg-white/5 border border-white/10 shadow-2xl rounded-3xl flex items-center justify-center text-white mb-10 group-hover:bg-white group-hover:text-brand-blue group-hover:scale-110 transition-all duration-500">
+                  {feature.icon}
+                </div>
+                <h3 className="text-white font-display text-2xl font-bold mb-6 tracking-tight uppercase">{feature.title}</h3>
+                <p className="text-white/40 leading-relaxed font-light text-base max-w-xs mx-auto">
+                  {feature.desc}
+                </p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Footer */}
+      <footer id="contact" className="bg-slate-50 pt-40 pb-16">
+        <div className="max-w-7xl mx-auto px-6">
+          <div className="grid grid-cols-1 lg:grid-cols-5 gap-20 mb-32">
+            <div className="lg:col-span-2">
+              <div className="flex items-center space-x-3 mb-10">
+                <div className="w-12 h-12 bg-brand-blue flex items-center justify-center rounded-2xl shadow-xl">
+                  <span className="text-white font-display font-bold text-2xl">B</span>
+                </div>
+                <h3 className="font-display font-bold text-3xl tracking-tighter text-brand-blue">
+                  BULK XPRESS
+                </h3>
+              </div>
+              <p className="text-slate-400 text-lg leading-relaxed mb-12 max-w-sm">
+                Lagos Island's premier supply hub bridging global brands with local supermarket convenience.
+              </p>
+              <div className="flex space-x-6">
+                {['fb', 'ig', 'tw'].map(s => (
+                  <div key={s} className="w-12 h-12 rounded-2xl border border-slate-200 flex items-center justify-center text-slate-400 hover:bg-brand-blue hover:text-white hover:border-brand-blue cursor-pointer transition-all duration-500">
+                    <span className="text-xs font-bold uppercase">{s}</span>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            <div className="lg:col-span-1">
+              <h4 className="font-display font-bold text-slate-900 mb-10 uppercase tracking-[0.4em] text-[10px]">Explore</h4>
+              <ul className="space-y-6">
+                {['Beverages', 'Laundry', 'Skin Care', 'Groceries', 'Snacks'].map(item => (
+                  <li key={item} className="text-slate-400 text-sm hover:text-brand-blue transition-colors cursor-pointer font-medium">{item}</li>
+                ))}
+              </ul>
+            </div>
+
+            <div className="lg:col-span-2 pl-0 lg:pl-10">
+              <h4 className="font-display font-bold text-slate-900 mb-10 uppercase tracking-[0.4em] text-[10px]">Headquarters</h4>
+              <div className="space-y-10">
+                <div className="flex items-start gap-4">
+                  <MapPin size={24} className="text-brand-blue flex-shrink-0 mt-1" />
+                  <p className="text-slate-500 text-lg leading-relaxed">
+                    42 Sandgrouse Market Road,<br />
+                    Lagos Island, Lagos, Nigeria.
+                  </p>
+                </div>
+                <div className="pt-8 border-t border-slate-200 flex items-center gap-8">
+                  <div>
+                    <p className="text-slate-400 text-[9px] font-black uppercase tracking-widest mb-1">Direct Line</p>
+                    <p className="text-slate-900 font-bold text-xl">+234 800 BULK XPR</p>
+                  </div>
+                  <div className="w-[1px] h-10 bg-slate-200" />
+                  <div>
+                    <p className="text-slate-400 text-[9px] font-black uppercase tracking-widest mb-1">Email</p>
+                    <p className="text-slate-900 font-bold text-lg">Xpress@bulk.co</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div className="pt-16 border-t border-slate-200 flex flex-col md:flex-row justify-between items-center gap-10">
+            <p className="text-slate-400 text-[9px] uppercase font-bold tracking-[0.5em]">
+              © {new Date().getFullYear()} Bulk Xpress Wholesales & Supermarket.
+            </p>
+            <div className="flex space-x-12">
+              <span className="text-slate-300 text-[9px] uppercase font-bold tracking-[0.4em] italic">Precision in Supply</span>
+            </div>
+          </div>
+        </div>
+      </footer>
+    </div>
+  );
+}
+

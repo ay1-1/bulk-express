@@ -1,0 +1,96 @@
+@import "tailwindcss";
+@import "aos/dist/aos.css";
+
+@theme {
+  --color-brand-blue: #002366;
+  --color-brand-light: #f8fafc;
+  --color-brand-gold: #c5a059;
+  --color-brand-navy: #001a4d;
+  
+  --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
+  --font-display: "Outfit", sans-serif;
+  --font-serif: "Playfair Display", serif;
+}
+
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;900&family=Outfit:wght@400;500;600;700;800&family=Playfair+Display:ital,wght@1,400;1,700&display=swap');
+
+html.lenis {
+  height: auto;
+}
+
+.lenis.lenis-smooth {
+  scroll-behavior: auto;
+}
+
+.lenis.lenis-smooth [data-lenis-prevent] {
+  overscroll-behavior: contain;
+}
+
+.lenis.lenis-stopped {
+  overflow: hidden;
+}
+
+.lenis.lenis-scrolling iframe {
+  pointer-events: none;
+}
+
+body {
+  @apply bg-brand-blue text-white overflow-x-hidden cursor-none;
+}
+
+.custom-cursor {
+  @apply fixed top-0 left-0 w-3 h-3 bg-white rounded-full pointer-events-none z-[9999] mix-blend-difference hidden lg:block;
+  transform: translate(-50%, -50%);
+}
+
+.custom-cursor-follower {
+  @apply fixed top-0 left-0 w-10 h-10 border border-white/30 rounded-full pointer-events-none z-[9998] hidden lg:block;
+  transform: translate(-50%, -50%);
+  transition: width 0.3s ease, height 0.3s ease, border-color 0.3s ease;
+}
+
+.cursor-hover .custom-cursor {
+  @apply w-8 h-8 bg-white mix-blend-difference;
+}
+
+.cursor-hover .custom-cursor-follower {
+  @apply w-12 h-12 border-white border-2;
+}
+
+.hero-text-line {
+  display: block;
+  overflow: hidden;
+}
+
+.hero-text-inner {
+  display: block;
+}
+
+.nav-active {
+  @apply h-[80px] bg-brand-blue/95 border-b border-white/10 backdrop-blur-xl transition-all duration-500;
+}
+
+.glass-nav {
+  @apply backdrop-blur-lg bg-brand-blue/90 border-b border-white/10;
+}
+
+.text-gradient {
+  background: linear-gradient(135deg, #ffffff 0%, #cbd5e1 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.wholesale-text {
+  background: linear-gradient(to bottom, #1e3a8a, #002366);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  text-shadow: 0 4px 10px rgba(0,0,0,0.1);
+}
+
+.btn-glow {
+  box-shadow: 0 0 30px rgba(0, 71, 171, 0.4);
+}
+
+.btn-glow:hover {
+  box-shadow: 0 0 50px rgba(0, 71, 171, 0.6);
+}
