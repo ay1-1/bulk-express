@@ -29,8 +29,9 @@ gsap.registerPlugin(ScrollTrigger);
 const IMAGES = {
   hero: "https://images.unsplash.com/photo-1542838132-92c53300491e?auto=format&fit=crop&q=80&w=2000",
   drinks: "https://images.unsplash.com/photo-1622483767028-3f66f32aef97?auto=format&fit=crop&q=80&w=800",
-  lotions: "https://images.unsplash.com/photo-1596461404969-9ae70f2830c1?auto=format&fit=crop&q=80&w=800", // Premium lotion image
-  grains: "https://images.unsplash.com/photo-1586201375761-83865001e31c?auto=format&fit=crop&q=80&w=800", // Rice/Grains
+  lotions: "https://images.unsplash.com/photo-1596461404969-9ae70f2830c1?auto=format&fit=crop&q=80&w=800",
+  snacks: "https://images.unsplash.com/photo-1559181567-c3190ca9959b?auto=format&fit=crop&q=80&w=800", // More reliable premium snacks image
+  grains: "https://images.unsplash.com/photo-1586201375761-83865001e31c?auto=format&fit=crop&q=80&w=800",
   produce: "https://images.unsplash.com/photo-1542838132-92c53300491e?auto=format&fit=crop&q=80&w=800", // Fresh Produce
   homecare: "https://images.unsplash.com/photo-1584622650111-993a426fbf0a?auto=format&fit=crop&q=80&w=800" // Detergents/Cleaning
 };
@@ -145,6 +146,19 @@ export default function App() {
         },
         yPercent: 20,
         ease: "none"
+      });
+
+      // Brand Story Text Reveal
+      gsap.from(".story-reveal-text", {
+        scrollTrigger: {
+          trigger: ".story-section",
+          start: "top 80%",
+        },
+        y: 40,
+        opacity: 0,
+        duration: 1.2,
+        stagger: 0.2,
+        ease: "power4.out"
       });
 
       // Sticky Navbar Effect
@@ -331,6 +345,61 @@ export default function App() {
         </div>
       </section>
 
+      {/* Brand Context Section */}
+      <section className="story-section py-32 sm:py-48 bg-white relative overflow-hidden">
+        <div className="absolute top-0 right-0 w-1/3 h-full bg-slate-50/50" />
+        
+        <div className="max-w-7xl mx-auto px-6 relative z-10">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 lg:gap-32 items-center">
+            <div className="order-2 lg:order-1">
+              <span className="story-reveal-text block text-brand-gold font-black text-[12px] uppercase tracking-[0.6em] mb-8">Our Legacy & Mission</span>
+              <h2 className="story-reveal-text text-brand-blue font-display text-5xl md:text-8xl font-black mb-12 leading-[0.85] tracking-tighter uppercase">
+                The Heart of <br />
+                <span className="wholesale-text block italic font-serif lowercase py-2 pr-4">Lagos Island</span>
+                Supply Chain
+              </h2>
+              
+              <div className="space-y-8 max-w-xl">
+                <p className="story-reveal-text text-slate-600 text-lg sm:text-xl leading-relaxed font-medium">
+                  Bulk Xpress was founded on a simple realization: the bustling heart of Lagos Island—specifically the iconic <span className="text-brand-blue font-bold">Sandgrouse area</span>—needed a supply partner that understood both global quality and local speed.
+                </p>
+                
+                <div className="story-reveal-text h-px w-20 bg-brand-gold/30" />
+                
+                <p className="story-reveal-text text-slate-500 text-base sm:text-lg leading-relaxed">
+                  We bridge the gap between premium international manufacturers and the vibrant local economy. Whether you're a household looking for <span className="italic">genuine skin care</span> and long-life beverages, or a business requiring <span className="font-bold text-brand-blue">consistent grocery logistics</span>, we provide the infrastructure that keeps the Island running.
+                </p>
+                
+                <button className="story-reveal-text mt-8 px-8 py-4 border border-brand-blue/10 rounded-full flex items-center gap-6 group hover:bg-brand-blue hover:text-white transition-all duration-500">
+                  <span className="font-black text-[11px] uppercase tracking-[0.3em]">Discover the Xpress Way</span>
+                  <div className="w-8 h-px bg-brand-gold group-hover:w-16 transition-all duration-700" />
+                </button>
+              </div>
+            </div>
+            
+            <div className="order-1 lg:order-2 relative" data-aos="fade-left">
+               <div className="relative z-10 rounded-[3rem] overflow-hidden shadow-[0_40px_100px_rgba(0,35,102,0.15)] h-[550px] sm:h-[700px] border-[12px] border-white">
+                  <img 
+                    src="https://images.unsplash.com/photo-1542838132-92c53300491e?auto=format&fit=crop&q=80&w=1200" 
+                    alt="Bulk Xpress Quality Assurance" 
+                    className="w-full h-full object-cover grayscale hover:grayscale-0 transition-all duration-[1.5s] ease-out scale-110 hover:scale-100"
+                  />
+               </div>
+               
+               {/* Floating elements */}
+               <div className="absolute -bottom-12 -left-12 bg-brand-gold p-10 rounded-[2.5rem] shadow-2xl z-20 hidden md:block animate-bounce-slow">
+                  <div className="flex flex-col items-center">
+                    <p className="text-brand-blue text-4xl font-black font-display tracking-tighter">100%</p>
+                    <p className="text-brand-blue/60 text-[10px] font-black uppercase tracking-widest mt-1">Authentic</p>
+                  </div>
+               </div>
+               
+               <div className="absolute -top-10 -right-10 w-48 h-48 bg-brand-blue/5 rounded-full blur-3xl" />
+            </div>
+          </div>
+        </div>
+      </section>
+
       {/* Product Categories Section */}
       <section id="wholesale" className="py-24 sm:py-32 bg-brand-blue relative px-6 sm:px-12 flex flex-col items-center">
         <div className="max-w-[1400px] w-full mb-16">
@@ -348,7 +417,7 @@ export default function App() {
             { name: "GROCERIES", cat: "Fresh Grains & Stall Staples", img: IMAGES.grains, delay: "200" },
             { name: "FRESH PRODUCE", cat: "Sandgrouse's Finest Harvest", img: IMAGES.produce, delay: "300" },
             { name: "HOME CARE", cat: "Cleaning & Laundry Essentials", img: IMAGES.homecare, delay: "400" },
-            { name: "QUICK SNACKS", cat: "Imported & Local Favorites", img: IMAGES.hero, delay: "500" }
+            { name: "QUICK SNACKS", cat: "Imported & Local Favorites", img: IMAGES.snacks, delay: "500" }
           ].map((item) => (
             <div
               key={item.name}
